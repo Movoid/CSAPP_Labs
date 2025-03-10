@@ -28,7 +28,7 @@ construct ASCII string in stack, and let %rdi point to it (use ROPGadget in Phas
 
 ```
 hacked stack:  
-0               7  
+0                7  
 +----------------+  
 | ASCII STR      |    
 +----------------+
@@ -49,4 +49,44 @@ hacked stack:
 
 
 # ./rtarget
+
+## Phase 4
+
+same to Phase1.
+but you will get a SIGSEGV in `ld.so` cuz,  
+
+```asm
+libc.so.6:00007FFFF7E19F9A movaps  xmmword ptr [rbp-40h], xmm0
+```
+
+have to align `%rbp` as 16 bytes to use `xmm` registers.  
+
+...
+
+noticed that `%rbp` is changed by,
+
+```asm
+libc.so.6:00007FFFF7EBD630 mov     rbp, rsp
+```
+
+then you have to align `%rsp` as 16 bytes before hacked to `touch1` .
+
+there is a simple way, just avoid `touch1`'s `sub rsp, 8`. it might corrupt the stack but is able to pass Phase 4.  
+
+## Phase 5
+
+same to Phase 4, use ROP Gadget in Phase 2,  
+but avoid `sub rsp, 8` in `touch2` .
+
+## Phase 6
+
+there is no `sub` but `push` in `touch3`.  
+
+use `ret` to adjust `%rsp` (+8) to align as 16 bytes.
+
+> noticed that `rtarget` used Stack ASLR, which prevented from using absolute vaddr as in the Phase 3 solution.
+
+still use gadgets,
+
+> it's kinda hard to think how to contruct gadgets.  
 
