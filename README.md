@@ -15,11 +15,16 @@
   - [x] Phase 6
   - [ ] Secret Phase
 
-- [ ] Attack Lab
+- [x] Attack Lab
+
+- IDA Pro is f**king great!
 
   - [x] Phase 1
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-  - [ ] Phase 6
+  - [x] Phase 6
+
+- [ ] Arch Lab
+
