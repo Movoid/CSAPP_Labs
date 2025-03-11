@@ -17,9 +17,9 @@ word_t ncopy(word_t *src, word_t *dst, word_t len)
     while (len > 0) {
 	val = *src++;
 	*dst++ = val;
-	if (val > 0)
-	    count++;
-	len--;
+        if (val > 0) // only count non-zero bytes.
+          count++;
+        len--;
     }
     return count;
 }
