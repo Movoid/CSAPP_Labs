@@ -25,25 +25,27 @@ ele3:
 
 main:
   irmovq ele1, %rdi
-  call sum_list
+  call rsum_list
   ret
 
-sum_list:
+rsum_list:
   pushq %rbx
   pushq %rbp
-  xorq %rax, %rax
+  xorq %rbp, %rbp
 cond:
   andq %rdi, %rdi
   # if is zero then end
   je end_ret
 
-loop:
-  mrmovq (%rdi), %rsi
-  addq %rsi, %rax
+rec:
+  mrmovq (%rdi), %rbx # %rdi -> &beg_node
+  addq %rbx, %rbp
   mrmovq 8(%rdi), %rdi
-  jmp cond
+  call rsum_list
+  addq %rax, %rbp
 
 end_ret:
+  rrmovq %rbp, %rax
   popq %rbp
   popq %rbx
   ret

@@ -1,0 +1,66 @@
+# Y86-64 ASM
+# %rax, %rcx, %rdx, %rsi, %rdi Caller-Saved
+# %rbx, %rbp, %rsp             Callee-Saved
+
+
+.pos 0
+start_main:
+  irmovq stack, %rsp
+  call main
+  halt
+
+.align 8
+src:
+  .quad 0x00a
+  .quad 0x0b0
+  .quad 0xc00
+
+dest:
+  .quad 0x111
+  .quad 0x222
+  .quad 0x333
+
+main:
+  irmovq src, %rdi
+  irmovq dest, %rsi
+  irmovq $24, %rdx  # MUST BE n*8 .
+                    # Y86_64 doesn't support 1 byte op.
+  call copy_block
+  ret
+
+
+# %rax ret XOR sum
+# %rdi src
+# %rsi dst
+# %rdx len
+# %rcx $1
+# %rbx value
+# %rbp
+# %rsp stack
+
+copy_block: 
+  pushq %rbx # val
+  pushq %rbp 
+  irmovq $8, %rcx
+  xorq %rax, %rax # result
+cond:
+  andq %rdx, %rdx # len
+  je end_ret
+
+loop:
+  mrmovq (%rdi), %rbx
+  rmmovq %rbx, (%rsi)
+  xorq %rbx, %rax
+  subq %rcx, %rdx
+  addq %rcx, %rdi
+  addq %rcx, %rsi
+  jmp cond
+
+end_ret:
+  popq %rbp
+  popq %rbx
+  ret
+
+
+.pos 0x800
+stack:
