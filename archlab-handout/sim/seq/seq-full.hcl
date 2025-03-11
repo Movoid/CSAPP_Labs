@@ -39,7 +39,7 @@ wordsig IRET	'I_RET'
 wordsig IPUSHQ	'I_PUSHQ'
 wordsig IPOPQ	'I_POPQ'
 # Instruction code for iaddq instruction
-wordsig IIADDQ	'I_IADDQ'
+wordsig IIADDQ	'I_IADDQ'  # THIS IS WHAT WE NEED.
 
 ##### Symbolic represenations of Y86-64 function codes                  #####
 wordsig FNONE    'F_NONE'        # Default function code
@@ -111,11 +111,11 @@ bool instr_valid = icode in
 # Does fetched instruction require a regid byte?
 bool need_regids =
 	icode in { IRRMOVQ, IOPQ, IPUSHQ, IPOPQ, 
-		     IIRMOVQ, IRMMOVQ, IMRMOVQ };
+		     IIRMOVQ, IRMMOVQ, IMRMOVQ, IIADDQ }; # IIADDQ NEEDS REGISTER.
 
 # Does fetched instruction require a constant word?
 bool need_valC =
-	icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ, IJXX, ICALL };
+	icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ, IJXX, ICALL, IIADDQ }; # IIADDQ NEEDS IMMEDIATE NUMBER.
 
 ################ Decode Stage    ###################################
 
@@ -123,20 +123,22 @@ bool need_valC =
 word srcA = [
 	icode in { IRRMOVQ, IRMMOVQ, IOPQ, IPUSHQ  } : rA;
 	icode in { IPOPQ, IRET } : RRSP;
+	icode in { IIADDQ } : RNONE; # USE IMMEDIATE NUMBER, NOT REGISTER.
 	1 : RNONE; # Don't need register
 ];
 
 ## What register should be used as the B source?
 word srcB = [
-	icode in { IOPQ, IRMMOVQ, IMRMOVQ  } : rB;
+	icode in { IOPQ, IRMMOVQ, IMRMOVQ, IIADDQ  } : rB; # USE rB AS TARGET.
 	icode in { IPUSHQ, IPOPQ, ICALL, IRET } : RRSP;
 	1 : RNONE;  # Don't need register
 ];
 
 ## What register should be used as the E destination?
+# *** IIADDQ USE rB AS TARGET REGISTER ID
 word dstE = [
 	icode in { IRRMOVQ } && Cnd : rB;
-	icode in { IIRMOVQ, IOPQ} : rB;
+	icode in { IIRMOVQ, IOPQ, IIADDQ} : rB; # *** IIADDQ WRITE rB IN EXECUTE PHASE (ADD IMMEDIATE NUMBER).
 	icode in { IPUSHQ, IPOPQ, ICALL, IRET } : RRSP;
 	1 : RNONE;  # Don't write any register
 ];
@@ -145,14 +147,16 @@ word dstE = [
 word dstM = [
 	icode in { IMRMOVQ, IPOPQ } : rA;
 	1 : RNONE;  # Don't write any register
-];
+]; # IIADDQ DOESN'T NEED TO WRITE ANYTHING IN M PHASE.
 
 ################ Execute Stage   ###################################
+
+# *** IIADDQ USE VALC (IMMEDIATE NUM), VALB (REGISTER) .
 
 ## Select input A to ALU
 word aluA = [
 	icode in { IRRMOVQ, IOPQ } : valA;
-	icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ } : valC;
+	icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ, IIADDQ } : valC; # READ valC AS IMMEDIATE NUMBER.
 	icode in { ICALL, IPUSHQ } : -8;
 	icode in { IRET, IPOPQ } : 8;
 	# Other instructions don't need ALU
@@ -161,7 +165,7 @@ word aluA = [
 ## Select input B to ALU
 word aluB = [
 	icode in { IRMMOVQ, IMRMOVQ, IOPQ, ICALL, 
-		      IPUSHQ, IRET, IPOPQ } : valB;
+		      IPUSHQ, IRET, IPOPQ, IIADDQ } : valB; # READ rA AS aluB TO CALC RESULT
 	icode in { IRRMOVQ, IIRMOVQ } : 0;
 	# Other instructions don't need ALU
 ];
@@ -169,11 +173,12 @@ word aluB = [
 ## Set the ALU function
 word alufun = [
 	icode == IOPQ : ifun;
-	1 : ALUADD;
+	1 : ALUADD; # IADDR KEEP THIS ALU FUNCTION
 ];
 
 ## Should the condition codes be updated?
-bool set_cc = icode in { IOPQ };
+## ALU COMMAND HAVE TO SET CC (RFLAGS).
+bool set_cc = icode in { IOPQ, IIADDQ };
 
 ################ Memory Stage    ###################################
 

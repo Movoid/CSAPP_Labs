@@ -28,7 +28,6 @@ main:
   call copy_block
   ret
 
-
 # %rax ret XOR sum
 # %rdi src
 # %rsi dst

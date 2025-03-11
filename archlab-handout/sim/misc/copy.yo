@@ -28,7 +28,6 @@
 0x066: 807000000000000000   |   call copy_block
 0x06f: 90                   |   ret
                             | 
-                            | 
                             | # %rax ret XOR sum
                             | # %rdi src
                             | # %rsi dst
