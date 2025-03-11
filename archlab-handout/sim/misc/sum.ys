@@ -1,0 +1,35 @@
+# Y86-64 ASM
+# %rax, %rcx, %rdx, %rsi, %rdi Caller-Saved
+# %rbx, %rbp, %rsp             Callee-Saved
+
+  # prologue
+  irmovq stack, %rsp
+  call start
+  halt
+  # end
+
+.align 8
+ele1:
+  .quad 0x00a
+  .quad ele2
+ele2:
+  .quad 0x0b0
+  .quad ele3
+ele3:
+  .quad 0xc00
+  .quad 0
+
+start:
+  irmovq $2, %rax
+  irmovq $2, %rsi
+  subq %rsi, %rax
+  je end_ret
+  ret
+
+end_ret:
+  irmovq $66, %rdx
+  irmovq $66, %rcx
+  ret
+
+
+stack:
