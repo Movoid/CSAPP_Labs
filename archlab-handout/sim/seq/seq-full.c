@@ -22,7 +22,7 @@ long long gen_instr_valid()
       (I_RRMOVQ) || (icode) == (I_IRMOVQ) || (icode) == (I_RMMOVQ) || 
       (icode) == (I_MRMOVQ) || (icode) == (I_ALU) || (icode) == (I_JMP) || 
       (icode) == (I_CALL) || (icode) == (I_RET) || (icode) == (I_PUSHQ) || 
-      (icode) == (I_POPQ));
+      (icode) == (I_POPQ) || (icode) == (I_IADDQ));
 }
 
 long long gen_need_regids()

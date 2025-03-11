@@ -28,7 +28,7 @@
 
 - [ ] Arch Lab
 
-  - [ ] Part A
-  - [ ] Part B
+  - [x] Part A
+  - [x] Part B
   - [ ] Part C
 
