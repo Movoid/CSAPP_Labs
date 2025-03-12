@@ -26,9 +26,17 @@
   - [x] Phase 5
   - [x] Phase 6
 
-- [ ] Arch Lab
+- [x] Arch Lab
+
+- Hard to achieve the max score. 
+- Refered to other's solution.
 
   - [x] Part A
   - [x] Part B
-  - [ ] Part C
+  - [x] Part C
+
+- [ ] Cache Lab
+
+  - [ ] Part A
+  - [ ] Part B
 

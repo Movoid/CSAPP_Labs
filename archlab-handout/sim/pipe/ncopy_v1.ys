@@ -1,0 +1,201 @@
+#/* $begin ncopy-ys */
+##################################################################
+# ncopy.ys - Copy a src block of len words to dst.
+# Return the number of positive words (>0) contained in src.
+#
+# Include your name and ID here.
+#
+# Describe how and why you modified the baseline code.
+#
+##################################################################
+# Do not modify this portion
+# Function prologue.
+# %rdi = src, %rsi = dst, %rdx = len
+ncopy:
+
+##################################################################
+
+# %rax	ret non-zero byte cnt
+# %rcx	way8
+# %rdx	len
+# %rbx	
+# %rsp	stack
+# %rbp	
+# %rsi	dst
+# %rdi	src
+# %r8		way1
+# %r9		way2
+# %r10	way3
+# %r11	way4
+# %r12	way5
+# %r13	way6
+# %r14	way7
+
+#	xorq %rax, %rax
+
+loop_8_cond:
+	iaddq $-8, %rdx
+	jl loop_8_abort_fin
+
+loop_8_way:
+	mrmovq (%rdi), %r8
+	mrmovq 8(%rdi), %r9
+	mrmovq 16(%rdi), %r10
+	mrmovq 24(%rdi), %r11
+	mrmovq 32(%rdi), %r12
+	mrmovq 40(%rdi), %r13
+	mrmovq 48(%rdi), %r14
+	mrmovq 56(%rdi), %rcx
+loop_8_check_way1_nonzero:
+	andq %r8, %r8
+	rmmovq %r8, (%rsi)
+	jle loop_8_check_way2_nonzero
+	iaddq $1, %rax 
+
+loop_8_check_way2_nonzero:
+	andq %r9, %r9
+	rmmovq %r9, 8(%rsi)
+	jle loop_8_check_way3_nonzero
+	iaddq $1, %rax 
+
+loop_8_check_way3_nonzero:
+	andq %r10, %r10
+	rmmovq %r10, 16(%rsi)
+	jle loop_8_check_way4_nonzero
+	iaddq $1, %rax 
+
+loop_8_check_way4_nonzero:
+	andq %r11, %r11
+	rmmovq %r11, 24(%rsi)
+	jle loop_8_check_way5_nonzero
+	iaddq $1, %rax 
+
+loop_8_check_way5_nonzero:
+	andq %r12, %r12
+	rmmovq %r12, 32(%rsi)
+	jle loop_8_check_way6_nonzero
+	iaddq $1, %rax 
+
+loop_8_check_way6_nonzero:
+	andq %r13, %r13
+	rmmovq %r13, 40(%rsi)
+	jle loop_8_check_way7_nonzero
+	iaddq $1, %rax 
+	
+loop_8_check_way7_nonzero:
+	andq %r14, %r14
+	rmmovq %r14, 48(%rsi)
+	jle loop_8_check_way8_nonzero
+	iaddq $1, %rax 
+	
+loop_8_check_way8_nonzero:
+	andq %rcx, %rcx
+	rmmovq %rcx, 56(%rsi)
+	jle loop_8_success_fin
+	iaddq $1, %rax 
+	
+loop_8_success_fin:
+	iaddq $64, %rdi
+	iaddq $64, %rsi
+	jmp loop_8_cond
+
+loop_8_abort_fin:
+	iaddq $8, %rdx
+
+loop_4_cond:
+	iaddq $-4, %rdx
+	jl loop_4_abort_fin
+
+loop_4_way:
+	mrmovq (%rdi), %r8
+	mrmovq 8(%rdi), %r9
+	mrmovq 16(%rdi), %r10
+	mrmovq 24(%rdi), %r11
+
+loop_4_check_way1_nonzero:
+	andq %r8, %r8
+	rmmovq %r8, (%rsi)
+	jle loop_4_check_way2_nonzero
+	iaddq $1, %rax 
+
+loop_4_check_way2_nonzero:
+	andq %r9, %r9
+	rmmovq %r9, 8(%rsi)
+	jle loop_4_check_way3_nonzero
+	iaddq $1, %rax 
+
+loop_4_check_way3_nonzero:
+	andq %r10, %r10
+	rmmovq %r10, 16(%rsi)
+	jle loop_4_check_way4_nonzero
+	iaddq $1, %rax 
+
+loop_4_check_way4_nonzero:
+	andq %r11, %r11
+	rmmovq %r11, 24(%rsi)
+	jle loop_4_success_fin
+	iaddq $1, %rax 
+
+loop_4_success_fin:
+	iaddq $32, %rdi
+	iaddq $32, %rsi
+	jmp loop_4_cond
+
+loop_4_abort_fin:
+	iaddq $4, %rdx
+
+loop_2_cond:
+	iaddq $-2, %rdx
+	jl loop_2_abort_fin
+
+loop_2_way:
+	mrmovq (%rdi), %r8
+	mrmovq 8(%rdi), %r9
+
+loop_2_check_way1_nonzero:
+	andq %r8, %r8
+	rmmovq %r8, (%rsi)
+	jle loop_2_check_way2_nonzero
+	iaddq $1, %rax 
+
+loop_2_check_way2_nonzero:
+	andq %r9, %r9
+	rmmovq %r9, 8(%rsi)
+	jle loop_2_success_fin
+	iaddq $1, %rax 
+
+loop_2_success_fin:
+	iaddq $16, %rdi
+	iaddq $16, %rsi
+	jmp loop_2_cond
+
+loop_2_abort_fin:
+	iaddq $2, %rdx
+
+loop_1_cond:
+	iaddq $-1, %rdx
+	jl Done
+
+loop_1_way:
+	mrmovq (%rdi), %r8
+
+loop_1_check_way1_nonzero:
+	andq %r8, %r8
+	rmmovq %r8, (%rsi)
+	jle loop_1_success_fin
+	iaddq $1, %rax 
+
+loop_1_success_fin:
+	jmp Done
+
+
+
+##################################################################
+# Do not modify the following section of code
+# Function epilogue.
+Done:
+	ret
+##################################################################
+# Keep the following label at the end of your function
+End:
+#/* $end ncopy-ys */

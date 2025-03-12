@@ -1,8 +1,0 @@
-// 重新生成 drivers + hcl, 测试前工作
-make VERSION=full
-
-// 两个测试程序
-./ldriver.yo
-./rdriver.yo
-
-
