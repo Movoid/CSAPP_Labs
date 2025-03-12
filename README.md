@@ -37,6 +37,6 @@
 
 - [ ] Cache Lab
 
-  - [ ] Part A
+  - [x] Part A
   - [ ] Part B
 
