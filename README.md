@@ -35,8 +35,11 @@
   - [x] Part B
   - [x] Part C
 
-- [ ] Cache Lab
+- [x] Cache Lab
+
+- 52.6/53 :)
 
   - [x] Part A
-  - [ ] Part B
+  - [x] Part B
 
+- [] Tsh Lab

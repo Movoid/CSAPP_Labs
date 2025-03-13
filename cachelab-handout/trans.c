@@ -258,6 +258,90 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N]) {
         }
       }
     }
+  } else if (N == 67 && M == 61) {
+    // int A[N][M], int B[M][N]
+    // 67 rows, 61 cols
+    // int A[67][61]
+    // 不规则形状, Set Index 受形状影响大,
+    // 可能导致更多 Block 转置时，发生 Cache Thrashing,
+    // 选择先复制再转置.
+
+    int a, b, c, d, e, f, g, h;
+    for (int b_i = 0; b_i < 64; b_i += 8) {
+      for (int b_j = 0; b_j < 56; b_j += 8) {
+        // A based on A[b_i][b_j]
+        // B based on B[b_j][b_i]
+        for (int k = 0; k < 8; k++) {
+          a = A[b_i + k][b_j + 0];
+          b = A[b_i + k][b_j + 1];
+          c = A[b_i + k][b_j + 2];
+          d = A[b_i + k][b_j + 3];
+          e = A[b_i + k][b_j + 4];
+          f = A[b_i + k][b_j + 5];
+          g = A[b_i + k][b_j + 6];
+          h = A[b_i + k][b_j + 7];
+          B[b_j + k][b_i + 0] = a;
+          B[b_j + k][b_i + 1] = b;
+          B[b_j + k][b_i + 2] = c;
+          B[b_j + k][b_i + 3] = d;
+          B[b_j + k][b_i + 4] = e;
+          B[b_j + k][b_i + 5] = f;
+          B[b_j + k][b_i + 6] = g;
+          B[b_j + k][b_i + 7] = h;
+        }
+        for (int i = 0; i < 8; i++) {
+          for (int j = i + 1; j < 8; j++) {
+            a = B[b_j + i][b_i + j];
+            B[b_j + i][b_i + j] = B[b_j + j][b_i + i];
+            B[b_j + j][b_i + i] = a;
+          }
+        }
+      }
+    }
+    for (int b_i = 0; b_i < 65; b_i += 5) {
+      for (int b_j = 56; b_j < 61; b_j += 5) {
+        for (int k = 0; k < 5; k++) {
+          a = A[b_i + k][b_j + 0];
+          b = A[b_i + k][b_j + 1];
+          c = A[b_i + k][b_j + 2];
+          d = A[b_i + k][b_j + 3];
+          e = A[b_i + k][b_j + 4];
+          B[b_j + k][b_i + 0] = a;
+          B[b_j + k][b_i + 1] = b;
+          B[b_j + k][b_i + 2] = c;
+          B[b_j + k][b_i + 3] = d;
+          B[b_j + k][b_i + 4] = e;
+        }
+        for (int i = 0; i < 5; i++) {
+          for (int j = i + 1; j < 5; j++) {
+            a = B[b_j + i][b_i + j];
+            B[b_j + i][b_i + j] = B[b_j + j][b_i + i];
+            B[b_j + j][b_i + i] = a;
+          }
+        }
+      }
+    }
+    for (int b_i = 64; b_i < 67; b_i += 3) {
+      for (int b_j = 0; b_j < 60; b_j += 3) {
+        for (int k = 0; k < 3; k++) {
+          a = A[b_i + k][b_j + 0];
+          b = A[b_i + k][b_j + 1];
+          c = A[b_i + k][b_j + 2];
+          B[b_j + k][b_i + 0] = a;
+          B[b_j + k][b_i + 1] = b;
+          B[b_j + k][b_i + 2] = c;
+        }
+        for (int i = 0; i < 3; i++) {
+          for (int j = i + 1; j < 3; j++) {
+            a = B[b_j + i][b_i + j];
+            B[b_j + i][b_i + j] = B[b_j + j][b_i + i];
+            B[b_j + j][b_i + i] = a;
+          }
+        }
+      }
+    }
+    B[60][65] = A[65][60];
+    B[60][66] = A[66][60];
   }
 }
 /*
