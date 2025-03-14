@@ -4,13 +4,7 @@
       "name": "(gdb) 启动",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${fileDirname}/csim",
-      "args": [
-        "-t /home/MoonVoid/Dev/Projects/CppProjects/Lab/CSAPP/cachelab-handout/traces/yi.trace"
-      ],
-      // "args": [
-      //   "wpf"
-      // ],
+      "program": "${fileDirname}/tsh",
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
       "environment": [],

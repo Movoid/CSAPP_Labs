@@ -42,4 +42,13 @@
   - [x] Part A
   - [x] Part B
 
-- [ ] Tsh Lab
+- [x] Tsh Lab
+
+- Easy and boring.
+
+- [ ] Malloc Lab
+
+- [ ] Proxy Lab
+
+
+> fin.
