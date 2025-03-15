@@ -46,9 +46,5 @@
 
 - Easy and boring.
 
-- [ ] Malloc Lab
-
-- [ ] Proxy Lab
-
-
+> Malloc and Proxy Lab is boring, just moved to other projects.
 > fin.
